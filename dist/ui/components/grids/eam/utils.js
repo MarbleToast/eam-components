@@ -1,3 +1,5 @@
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -31,7 +33,10 @@ import { DatePicker, DateTimePicker } from "@material-ui/pickers";
 import { Clear as ClearIcon, InsertInvitation as CalendarIcon } from "@material-ui/icons";
 import { useAsyncDebounce, useMountedLayoutEffect } from "react-table";
 import { format as formatDate } from "date-fns";
-var BootstrapInput = withStyles(function (theme) {
+import EAMAutocomplete from "../../muiinputs/EAMAutocomplete";
+import Paper from '@material-ui/core/Paper';
+
+var getStyles = function getStyles(theme) {
   return {
     root: {
       width: '100%',
@@ -54,7 +59,9 @@ var BootstrapInput = withStyles(function (theme) {
       paddingLeft: '4px'
     }
   };
-})(InputBase);
+};
+
+var BootstrapInput = withStyles(getStyles)(InputBase);
 var FilterTextField = withStyles({
   root: {
     backgroundColor: "white",
@@ -370,7 +377,12 @@ var EAMFilterField = function EAMFilterField(_ref6) {
   var column = _ref6.column;
   var dataType = column.dataType,
       filter = column.filterValue,
-      setFilter = column.setFilter;
+      setFilter = column.setFilter,
+      CustomFilter = column.CustomFilter,
+      _column$valueKey = column.valueKey,
+      valueKey = _column$valueKey === void 0 ? 'code' : _column$valueKey,
+      _column$descKey = column.descKey,
+      descKey = _column$descKey === void 0 ? 'code' : _column$descKey;
 
   var _useState3 = useState(filter || getDefaultFilterValue(column)),
       _useState4 = _slicedToArray(_useState3, 2),
@@ -498,6 +510,43 @@ var EAMFilterField = function EAMFilterField(_ref6) {
           key: column.getOptionValue(e)
         }, column.getOptionLabel(e));
       }));
+
+    case "__AUTOCOMPLETE":
+      {
+        return /*#__PURE__*/React.createElement(EAMAutocomplete, {
+          value: localFilter?.fieldValue || '',
+          updateProperty: function updateProperty(val) {
+            updateFilter({
+              fieldName: column.id,
+              fieldValue: val,
+              joiner: 'AND',
+              operator: OPERATORS.EQUAL
+            });
+          },
+          valueKey: column.valueKey,
+          descKey: column.descKey,
+          valueDesc: localFilter?.[column.descKey] || '',
+          autocompleteHandler: column.autocompleteHandler,
+          suggestionsContainer: function suggestionsContainer(_ref7) {
+            var containerProps = _ref7.containerProps,
+                children = _ref7.children;
+            return /*#__PURE__*/React.createElement(Paper, _extends({
+              style: {
+                zIndex: '9999 !important',
+                position: 'fixed',
+                width: '500px'
+              }
+            }, containerProps), children);
+          }
+        });
+      }
+
+    case "__CUSTOM":
+      return /*#__PURE__*/React.createElement(CustomFilter, {
+        value: localFilter.fieldValue || '',
+        updateFilter: updateFilter,
+        column: column
+      });
 
     default:
       return null;

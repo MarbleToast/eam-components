@@ -130,7 +130,7 @@ export const EAMGridContextProvider = (props) => {
     const dataCreator = processData ?? (({ data: d }) => d);
 
     const columns = useMemo(
-        () => columnCreator({ gridField, cellRenderer }),
+        () => columnCreator({ gridField, cellRenderer, defaultCreateColumns }),
         [gridField, cellRenderer, columnCreator]
     );
     const data = useMemo(

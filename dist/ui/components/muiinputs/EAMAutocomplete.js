@@ -278,7 +278,9 @@ var EAMAutocomplete = /*#__PURE__*/function (_EAMBaseInput) {
 
       var _this$props = this.props,
           classes = _this$props.classes,
-          elementInfo = _this$props.elementInfo;
+          elementInfo = _this$props.elementInfo,
+          _this$props$suggestio = _this$props.suggestionsContainer,
+          suggestionsContainer = _this$props$suggestio === void 0 ? renderSuggestionsContainer : _this$props$suggestio;
       var _this$state = this.state,
           value = _this$state.value,
           suggestions = _this$state.suggestions; // Value should always be an object with code and desc
@@ -297,7 +299,7 @@ var EAMAutocomplete = /*#__PURE__*/function (_EAMBaseInput) {
         onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
         onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
         getSuggestionValue: this.getSuggestionValue,
-        renderSuggestionsContainer: renderSuggestionsContainer,
+        renderSuggestionsContainer: suggestionsContainer,
         renderSuggestion: function renderSuggestion(suggestion, _ref5) {
           var isHighlighted = _ref5.isHighlighted;
           return renderSuggestionContainer(suggestion, isHighlighted);

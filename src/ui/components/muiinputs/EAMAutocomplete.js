@@ -197,7 +197,7 @@ class EAMAutocomplete extends EAMBaseInput {
     };
 
     renderComponent() {
-        const { classes, elementInfo } = this.props;
+        const { classes, elementInfo, suggestionsContainer = renderSuggestionsContainer } = this.props;
         const { value, suggestions } = this.state;
 
         // Value should always be an object with code and desc
@@ -217,7 +217,7 @@ class EAMAutocomplete extends EAMBaseInput {
                 onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
                 getSuggestionValue={this.getSuggestionValue}
-                renderSuggestionsContainer={renderSuggestionsContainer}
+                renderSuggestionsContainer={suggestionsContainer}
                 renderSuggestion={(suggestion, { isHighlighted }) =>
                     renderSuggestionContainer(suggestion, isHighlighted)
                 }

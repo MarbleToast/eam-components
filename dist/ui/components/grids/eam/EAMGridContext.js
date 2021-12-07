@@ -188,7 +188,8 @@ export var EAMGridContextProvider = function EAMGridContextProvider(props) {
   var columns = useMemo(function () {
     return columnCreator({
       gridField: gridField,
-      cellRenderer: cellRenderer
+      cellRenderer: cellRenderer,
+      defaultCreateColumns: defaultCreateColumns
     });
   }, [gridField, cellRenderer, columnCreator]);
   var data = useMemo(function () {

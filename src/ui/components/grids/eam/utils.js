@@ -32,9 +32,10 @@ import {
   } from "@material-ui/icons";
 import { useAsyncDebounce, useMountedLayoutEffect } from "react-table";
 import { format as formatDate } from "date-fns";
+import EAMAutocomplete from "../../muiinputs/EAMAutocomplete";
+import Paper from '@material-ui/core/Paper';
 
-
-const BootstrapInput = withStyles((theme) => ({
+const getStyles = (theme) => ({
     root: {
         width: '100%',
         backgroundColor: "white",
@@ -55,7 +56,9 @@ const BootstrapInput = withStyles((theme) => ({
     input: {
         paddingLeft: '4px'
     }
-  }))(InputBase);
+  });
+
+const BootstrapInput = withStyles(getStyles)(InputBase);
 
 const FilterTextField = withStyles({
     root: {
@@ -282,7 +285,7 @@ const EAMCellField = ({ column, value }) => {
 }
 
 const EAMFilterField = ({ column }) => {
-    const { dataType, filterValue: filter, setFilter } = column;
+    const { dataType, filterValue: filter, setFilter, CustomFilter, valueKey = 'code', descKey = 'code'} = column;
     const [localFilter, setLocalFilter] = useState(filter || getDefaultFilterValue(column));
 
     useMountedLayoutEffect(() => setLocalFilter(filter || getDefaultFilterValue(column)), [filter])
@@ -412,6 +415,35 @@ const EAMFilterField = ({ column }) => {
                     ))}
                 </Select>
             )
+        case "__AUTOCOMPLETE": {
+            return <EAMAutocomplete
+                    value={localFilter?.fieldValue || ''}
+                    updateProperty={(val) => {
+                        updateFilter({
+                            fieldName: column.id,
+                            fieldValue: val,
+                            joiner: 'AND',
+                            operator: OPERATORS.EQUAL,
+                        });
+                    }}
+                    valueKey={column.valueKey}
+                    descKey={column.descKey}
+                    valueDesc={localFilter?.[column.descKey] || ''}
+                    autocompleteHandler={column.autocompleteHandler}
+                    suggestionsContainer={
+                        ({ containerProps, children }) =>
+                            <Paper style={{zIndex: '9999 !important', position: 'fixed', width: '500px'}} {...containerProps}>
+                                {children}
+                            </Paper>
+                    }
+                />
+        }
+        case "__CUSTOM":
+            return <CustomFilter
+                value={localFilter.fieldValue || ''}
+                updateFilter={updateFilter}
+                column={column}
+            />
         default:
             return null;
     }
