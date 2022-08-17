@@ -14,6 +14,7 @@ const EAMGrid = (props) => {
     const {
         getRowProps,
         getCellProps,
+        lazyLoadData,
         rowsPerPageOptionsComputed,
         customFooterOptions,
     } = props;
@@ -35,6 +36,8 @@ const EAMGrid = (props) => {
         tableInstance,
         loading,
         loadingExportToCSV,
+        disableHeader,
+        smallFooter,
     } = useContext(EAMGridContext);
 
     return (
@@ -44,7 +47,7 @@ const EAMGrid = (props) => {
                 onSearch={handleOnSearch}
                 toggleFilters={toggleFilters}
             />
-            <EAMGridHead
+            {!disableHeader && <EAMGridHead
                 selectedDataspy={selectedDataspy}
                 dataspies={dataspies}
                 onSearch={handleOnSearch}
@@ -52,20 +55,22 @@ const EAMGrid = (props) => {
                 toggleFilters={toggleFilters}
                 onDataspyChange={handleDataspyChange}
                 onResetFilters={handleResetFilters}
-            />
+            />}
+            
             <BlockUi tag="div" blocking={loading} style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <EAMGridMain
                     loading={loading}
                     tableInstance={tableInstance}
                     getRowProps={getRowProps}
                     getCellProps={getCellProps}
+                    getData={lazyLoadData}
                 />
             </BlockUi>
             <EAMGridFooter>
                 <Box flex="1" display="flex">
                     {customFooterOptions ? (
                         customFooterOptions()
-                    ) : (
+                    ) : !smallFooter && (
                         <BlockUi
                             tag="div"
                             blocking={loadingExportToCSV}
@@ -81,6 +86,7 @@ const EAMGrid = (props) => {
                         </BlockUi>
                     )}
                 </Box>
+                
                 <EAMGridPagination
                     labelRowsPerPage={"Per Page"}
                     onChangePage={handleChangePage}

@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { CellMeasurer, CellMeasurerCache, List, AutoSizer } from "react-virtualized";
 import { ScrollSync, ScrollSyncPane } from "react-scroll-sync";
+import EAMGridSubRows from "./EAMGridSubRows";
 
 const DefaultBodyCellComponent = withStyles((theme) => ({
     root: {
@@ -39,6 +40,13 @@ const DefaultTableComponent = withStyles((theme) => ({
     }
 }))(Table);
 
+const DefaultSubRowComponent = withStyles((theme) => ({
+    root: {
+        borderLeft: `1px solid ${theme.palette.grey[200]}`,
+        borderBottom: `1px solid ${theme.palette.grey[200]}`,
+    }
+}))(EAMGridSubRows);
+
 const DefaultTableSortLabel = withStyles((theme) => ({
     root: {
         position: "absolute",
@@ -57,17 +65,18 @@ const defaultPropsGetter = () => ({});
 let _cache;
 let _list;
 
-const EAMGridMain = (props) => {
-    const {
+const EAMGridMain = ({
         loading,
         tableInstance,
+        getData,
         getRowProps = defaultPropsGetter,
         getCellProps = defaultPropsGetter,
         getColumnProps = defaultPropsGetter,
         TableComponent = DefaultTableComponent,
         BodyCellComponent = DefaultBodyCellComponent,
         HeadCellComponent = DefaultHeadCellComponent,
-    } = props;
+        SubRowComponent = DefaultSubRowComponent,
+    }) => {
 
     const {
         getTableProps,
@@ -76,6 +85,7 @@ const EAMGridMain = (props) => {
         rows,
         prepareRow,
         selectedFlatRows,
+        state: {expanded}
     } = tableInstance;
 
     useEffect(() => {
@@ -91,8 +101,20 @@ const EAMGridMain = (props) => {
         if (_list) {
             _list && _list.recomputeRowHeights();
             _list.scrollToRow(0);
+            
         }
-    }, [rows]);
+    }, [rows, Object.keys(expanded).length]);
+
+    const renderRowSubComponent = React.useCallback(
+        ({ row, tableRowProps}) => (
+          <SubRowComponent
+            row={row}
+            tableRowProps={tableRowProps}
+            fetchFunction={getData}
+          />
+        ),
+        []
+      );
 
    const RenderRow = React.useCallback(
     ({ index, key, parent, style, isScrolling }) => {
@@ -117,20 +139,20 @@ const EAMGridMain = (props) => {
                 parent={parent}
             >
                 {({measure}) => (
-                <TableRow className="tr" component="div" {...tableRowProps} >
-                    {row.cells.map((cell) => {
-                        const cellProps = [
-                            { style: { maxWidth: cell.column.maxWidth, width: cell.column.width }},
-                            getCellProps(cell),
-                        ].filter(Boolean);
-                        return (
-                            <BodyCellComponent {...cell.getCellProps(cellProps)} className="td" component="div">
-                                {cell.render("Cell")}
-                            </BodyCellComponent>
-                        )
-                    }
-                    )}
-                </TableRow>
+                    <TableRow className="tr" component="div" {...tableRowProps} >
+                        {row.cells.map((cell) => {
+                            const cellProps = [
+                                { style: { maxWidth: cell.column.maxWidth, width: cell.column.width }},
+                                getCellProps(cell),
+                            ].filter(Boolean);
+                            return (
+                                <BodyCellComponent {...cell.getCellProps(cellProps)} className="td" component="div">
+                                    {cell.render("Cell")}
+                                </BodyCellComponent>
+                            )
+                        }
+                        )}
+                    </TableRow>
                 )}
             </CellMeasurer>
         )},
@@ -195,7 +217,7 @@ const EAMGridMain = (props) => {
                                             style={{ overflowX: 'scroll', overflowY: 'scroll', willChange: 'scroll-position' }}
                                             deferredMeasurementCache={_cache}
                                             overscanRowCount={10}
-                                            rowCount={rows.length}
+                                            rowCount={rows.length + Object.keys(expanded).length}
                                             rowHeight={_cache.rowHeight}
                                             rowRenderer={RenderRow}
                                             width={width}

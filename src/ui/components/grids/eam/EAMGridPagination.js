@@ -6,7 +6,7 @@ const defaultOptions = [50, 100, 250, 500, 1000];
 const getCount = (hasUnknownCount, count) => hasUnknownCount ? `${count}+` : count;
 
 const CustomTablePagination = withStyles(() => ({
-    toolbar: { padding: 0 }
+    toolbar: { padding: -20 }
 }))(TablePagination);
 
 const EAMGridPagination = ({

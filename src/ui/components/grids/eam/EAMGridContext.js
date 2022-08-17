@@ -24,6 +24,7 @@ const defaultCreateColumns = ({ gridField, cellRenderer }) =>
             dataType: field.dataType,
             Filter: EAMFilterField,
             Cell: cellRenderer ? cellRenderer : EAMCellField,
+            SubCell: cellRenderer ? cellRenderer : EAMCellField
         }));
 
 const processFilters = (filters) => {
@@ -74,6 +75,7 @@ export const EAMGridContext = createContext();
 export const EAMGridContextProvider = (props) => {
     const {
         gridName,
+        params,
         userFunctionName,
         gridID,
         useNative = true,
@@ -90,6 +92,8 @@ export const EAMGridContextProvider = (props) => {
         onChangeDataspy,
         searchOnMount,
         cellRenderer,
+        disableHeader,
+        smallFooter,
         handleError,
         createColumns,
         dataCallback,
@@ -117,6 +121,7 @@ export const EAMGridContextProvider = (props) => {
         userFunctionName: userFunctionName ?? gridName,
         gridID,
         useNative,
+        params: params || null,
         dataspyID: initialDataspyID || null,
         countTotal: true,
         includeMetadata: true,
@@ -417,6 +422,8 @@ export const EAMGridContextProvider = (props) => {
         handleResetFilters,
         handleExportToCSV,
         loadingExportToCSV,
+        disableHeader,
+        smallFooter,
     };
 
     return (

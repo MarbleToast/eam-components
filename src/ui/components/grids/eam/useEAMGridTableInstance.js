@@ -1,6 +1,6 @@
 import React from "react";
 import { Checkbox, withStyles } from "@material-ui/core";
-import { useFilters, useFlexLayout, useRowSelect, useSortBy, useTable } from "react-table";
+import { useFilters, useFlexLayout, useRowSelect, useSortBy, useTable, useExpanded } from "react-table";
 
 const DefaultCheckbox = withStyles(() => ({
     root: {
@@ -50,6 +50,7 @@ const useEAMGridTableInstance = (settings) => {
         useTableSettings,
         useFilters,
         useSortBy,
+        useExpanded,
         useRowSelect,
         useFlexLayout,
         useSelectionCheckboxHook(selectable),
